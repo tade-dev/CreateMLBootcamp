@@ -34,7 +34,7 @@ struct ContentView: View {
         return arrayProbs.sorted(by: { $0.value > $1.value } )
     }
     
-    let model = try? MobileNetV2(configuration: MLModelConfiguration())
+    let model = try? CatsVsDogsImageClassifier_1(configuration: MLModelConfiguration())
     
     var body: some View {
         
@@ -91,15 +91,15 @@ struct ContentView: View {
         guard let uiImage = UIImage(named: images[currentIndex]) else { return }
         
         // resize the image
-        let resizedImage = uiImage.resizeTo(CGSize(width: 224, height: 224))
+        let resizedImage = uiImage.resizeTo(CGSize(width: 299, height: 299))
         guard let buffer = resizedImage.toCVPixelBuffer() else { return }
         
         do {
             let prediction = try model?.prediction(image: buffer)
-            if let classLabelProbs = prediction?.classLabelProbs {
-                probs = classLabelProbs
+            if let targetProbability = prediction?.targetProbability {
+                probs = targetProbability
             }
-            print(prediction?.classLabel ?? "neno")
+            print(prediction?.target ?? "neno")
         } catch {
             print(error.localizedDescription)
         }
